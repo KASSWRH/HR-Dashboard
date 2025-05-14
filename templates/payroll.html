@@ -1,0 +1,326 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="payroll-container">
+    <div class="payroll-header">
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
+                <div class="stat-content">
+                    <h3>{{ salary_data.this_month }}</h3>
+                    <p>Total Payroll (April)</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-chart-pie"></i></div>
+                <div class="stat-content">
+                    <h3>{{ ((salary_data.this_month_value - salary_data.last_month_value) / salary_data.last_month_value * 100)|round(1) }}%</h3>
+                    <p>Change from Last Month</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <div class="stat-content">
+                    <h3>{{ departments.values()|sum }}</h3>
+                    <p>Total Employees</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+                <div class="stat-content">
+                    <h3>Apr 30</h3>
+                    <p>Next Payroll Date</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="payroll-body">
+        <div class="card-row">
+            <div class="card payroll-breakdown">
+                <div class="card-header">
+                    <h3>Payroll Breakdown by Department</h3>
+                </div>
+                <div class="card-body">
+                    <canvas id="payrollBreakdownChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="card payroll-trend">
+                <div class="card-header">
+                    <h3>Payroll Trend (Last 6 Months)</h3>
+                </div>
+                <div class="card-body">
+                    <canvas id="payrollTrendChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card salary-table">
+            <div class="card-header">
+                <h3>Employee Salary Details</h3>
+                <div class="search-filter">
+                    <input type="text" placeholder="Search employees..." id="salarySearch">
+                    <select id="salaryDepartmentFilter">
+                        <option value="all">All Departments</option>
+                        {% for dept in departments %}
+                        <option value="{{ dept }}">{{ dept }}</option>
+                        {% endfor %}
+                    </select>
+                    <select id="salarySortFilter">
+                        <option value="name">Sort by Name</option>
+                        <option value="department">Sort by Department</option>
+                        <option value="salary_high">Sort by Salary (High to Low)</option>
+                        <option value="salary_low">Sort by Salary (Low to High)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="card-body">
+                <table class="salary-details-table">
+                    <thead>
+                        <tr>
+                            <th>Employee</th>
+                            <th>Department</th>
+                            <th>Position</th>
+                            <th>Basic Salary</th>
+                            <th>Allowances</th>
+                            <th>Deductions</th>
+                            <th>Net Salary</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="salaryTableBody">
+                        {% for employee in employees %}
+                        <tr data-department="{{ employee.department }}" data-salary="{{ employee.salary }}">
+                            <td>
+                                <div class="employee-info">
+                                    <img style ="width: 200px;" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c" alt="Employee">
+                                    <div>
+                                        <h4>{{ employee.name }}</h4>
+                                        <p>ID: EMP-{{ 1000 + loop.index }}</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{ employee.department }}</td>
+                            <td>{{ employee.position }}</td>
+                            <td>${{ employee.salary }}</td>
+                            <td>${{ (employee.salary * 0.15)|round|int }}</td>
+                            <td>${{ (employee.salary * 0.1)|round|int }}</td>
+                            <td>${{ (employee.salary + (employee.salary * 0.15) - (employee.salary * 0.1))|round|int }}</td>
+                            <td>
+                                <button class="action-btn view-btn"><i class="fas fa-eye"></i></button>
+                                <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+                                <button class="action-btn download-btn"><i class="fas fa-download"></i></button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="card-row">
+            <div class="card compensation-structure">
+                <div class="card-header">
+                    <h3>Compensation Structure</h3>
+                </div>
+                <div class="card-body">
+                    <div class="compensation-tabs">
+                        <div class="tab-header">
+                            <div class="tab-item active" data-tab="basic">Basic Salary</div>
+                            <div class="tab-item" data-tab="allowances">Allowances</div>
+                            <div class="tab-item" data-tab="deductions">Deductions</div>
+                            <div class="tab-item" data-tab="benefits">Benefits</div>
+                        </div>
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="basic-pane">
+                                <canvas id="basicSalaryChart"></canvas>
+                            </div>
+                            <div class="tab-pane" id="allowances-pane">
+                                <canvas id="allowancesChart"></canvas>
+                            </div>
+                            <div class="tab-pane" id="deductions-pane">
+                                <canvas id="deductionsChart"></canvas>
+                            </div>
+                            <div class="tab-pane" id="benefits-pane">
+                                <canvas id="benefitsChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card upcoming-payments">
+                <div class="card-header">
+                    <h3>Upcoming Payments</h3>
+                </div>
+                <div class="card-body">
+                    <div class="payment-timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-date">
+                                <div class="date-box">
+                                    <span class="month">APR</span>
+                                    <span class="day">30</span>
+                                </div>
+                            </div>
+                            <div class="timeline-content">
+                                <div class="payment-details">
+                                    <h4>Monthly Salary Payment</h4>
+                                    <p>Regular salary payment for all employees</p>
+                                    <div class="payment-amount">
+                                        <span>Total: {{ salary_data.this_month }}</span>
+                                    </div>
+                                </div>
+                                <div class="timeline-actions">
+                                    <button class="btn-primary">Prepare</button>
+                                    <button class="btn-secondary">View Details</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-date">
+                                <div class="date-box">
+                                    <span class="month">MAY</span>
+                                    <span class="day">15</span>
+                                </div>
+                            </div>
+                            <div class="timeline-content">
+                                <div class="payment-details">
+                                    <h4>Quarterly Bonus Payment</h4>
+                                    <p>Performance-based bonus for Q1 2023</p>
+                                    <div class="payment-amount">
+                                        <span>Estimated: $25,450</span>
+                                    </div>
+                                </div>
+                                <div class="timeline-actions">
+                                    <button class="btn-primary">Prepare</button>
+                                    <button class="btn-secondary">View Details</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-date">
+                                <div class="date-box">
+                                    <span class="month">MAY</span>
+                                    <span class="day">31</span>
+                                </div>
+                            </div>
+                            <div class="timeline-content">
+                                <div class="payment-details">
+                                    <h4>Monthly Salary Payment</h4>
+                                    <p>Regular salary payment for all employees</p>
+                                    <div class="payment-amount">
+                                        <span>Estimated: $60,000</span>
+                                    </div>
+                                </div>
+                                <div class="timeline-actions">
+                                    <button class="btn-primary">Prepare</button>
+                                    <button class="btn-secondary">View Details</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize payroll breakdown chart
+        initializePayrollBreakdownChart();
+        
+        // Initialize payroll trend chart
+        initializePayrollTrendChart();
+        
+        // Initialize compensation structure charts
+        initializeBasicSalaryChart();
+        initializeAllowancesChart();
+        initializeDeductionsChart();
+        initializeBenefitsChart();
+        
+        // Salary search and filter functionality
+        const searchInput = document.getElementById('salarySearch');
+        const departmentFilter = document.getElementById('salaryDepartmentFilter');
+        const sortFilter = document.getElementById('salarySortFilter');
+        const salaryRows = document.querySelectorAll('#salaryTableBody tr');
+        
+        searchInput.addEventListener('input', filterSalary);
+        departmentFilter.addEventListener('change', filterSalary);
+        sortFilter.addEventListener('change', sortSalaryTable);
+        
+        function filterSalary() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const departmentValue = departmentFilter.value;
+            
+            salaryRows.forEach(row => {
+                const name = row.querySelector('.employee-info h4').textContent.toLowerCase();
+                const department = row.getAttribute('data-department');
+                
+                const matchesSearch = name.includes(searchTerm);
+                const matchesDepartment = departmentValue === 'all' || department === departmentValue;
+                
+                if (matchesSearch && matchesDepartment) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+        
+        function sortSalaryTable() {
+            const sortValue = sortFilter.value;
+            const rowsArray = Array.from(salaryRows);
+            const tbody = document.getElementById('salaryTableBody');
+            
+            rowsArray.sort((a, b) => {
+                if (sortValue === 'name') {
+                    const nameA = a.querySelector('.employee-info h4').textContent;
+                    const nameB = b.querySelector('.employee-info h4').textContent;
+                    return nameA.localeCompare(nameB);
+                } else if (sortValue === 'department') {
+                    const deptA = a.getAttribute('data-department');
+                    const deptB = b.getAttribute('data-department');
+                    return deptA.localeCompare(deptB);
+                } else if (sortValue === 'salary_high' || sortValue === 'salary_low') {
+                    const salaryA = parseFloat(a.getAttribute('data-salary'));
+                    const salaryB = parseFloat(b.getAttribute('data-salary'));
+                    return sortValue === 'salary_high' ? salaryB - salaryA : salaryA - salaryB;
+                }
+                return 0;
+            });
+            
+            // Remove existing rows
+            while (tbody.firstChild) {
+                tbody.removeChild(tbody.firstChild);
+            }
+            
+            // Add sorted rows
+            rowsArray.forEach(row => {
+                tbody.appendChild(row);
+            });
+        }
+        
+        // Compensation structure tabs
+        const tabItems = document.querySelectorAll('.tab-item');
+        const tabPanes = document.querySelectorAll('.tab-pane');
+        
+        tabItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const tab = item.getAttribute('data-tab');
+                
+                // Remove active class from all tabs and panes
+                tabItems.forEach(tab => tab.classList.remove('active'));
+                tabPanes.forEach(pane => pane.classList.remove('active'));
+                
+                // Add active class to current tab and pane
+                item.classList.add('active');
+                document.getElementById(`${tab}-pane`).classList.add('active');
+            });
+        });
+    });
+</script>
+{% endblock %}

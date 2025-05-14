@@ -1,0 +1,176 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="workforce-container">
+    <div class="card workforce-summary">
+        <div class="card-header">
+            <h3>Workforce Summary</h3>
+        </div>
+        <div class="card-body">
+            <div class="summary-stats">
+                <div class="stat-item">
+                    <span class="stat-value">{{ departments.values()|sum }}</span>
+                    <span class="stat-label">Total Employees</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">{{ departments|length }}</span>
+                    <span class="stat-label">Departments</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">{{ (nationality_data.Foreigners / (nationality_data.values()|sum) * 100)|round }}%</span>
+                    <span class="stat-label">International</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">94%</span>
+                    <span class="stat-label">Retention Rate</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card employee-directory">
+        <div class="card-header">
+            <h3>Employee Directory</h3>
+            <div class="search-filter">
+                <input type="text" placeholder="Search employees..." id="employeeSearch">
+                <select id="departmentFilter">
+                    <option value="all">All Departments</option>
+                    {% for dept in departments %}
+                    <option value="{{ dept }}">{{ dept }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="card-body">
+            <table class="employee-table">
+                <thead>
+                    <tr>
+                        <th>Employee ID</th>
+                        <th>Name</th>
+                        <th>Department</th>
+                        <th>Position</th>
+                        <th>Nationality</th>
+                        <th>Performance</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="employeeTableBody">
+                    {% for employee in employees %}
+                    <tr data-department="{{ employee.department }}">
+                        <td>{{ employee.id }}</td>
+                        <td>{{ employee.name }}</td>
+                        <td>{{ employee.department }}</td>
+                        <td>{{ employee.position }}</td>
+                        <td>{{ employee.nationality }}</td>
+                        <td>
+                            <div class="performance-indicator">
+                                <div class="performance-bar">
+                                    <div class="performance-fill" style="width: {{ employee.performance }}%"></div>
+                                </div>
+                                <span>{{ employee.performance }}%</span>
+                            </div>
+                        </td>
+                        <td>
+                            <button class="action-btn view-btn"><i class="fas fa-eye"></i></button>
+                            <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="card-row">
+        <div class="card department-distribution">
+            <div class="card-header">
+                <h3>Department Distribution</h3>
+            </div>
+            <div class="card-body">
+                <canvas id="departmentPieChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="card headcount-trend">
+            <div class="card-header">
+                <h3>Headcount Trend</h3>
+            </div>
+            <div class="card-body">
+                <canvas id="headcountTrendChart"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card employee-activity">
+        <div class="card-header">
+            <h3>Recent Employee Activity</h3>
+        </div>
+        <div class="card-body">
+            <div class="activity-timeline">
+                <div class="activity-item">
+                    <div class="activity-icon"><i class="fas fa-user-plus"></i></div>
+                    <div class="activity-content">
+                        <h4>New Employee Onboarded</h4>
+                        <p>Emily Chen joined the UX team</p>
+                        <span class="activity-time">2 days ago</span>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon"><i class="fas fa-graduation-cap"></i></div>
+                    <div class="activity-content">
+                        <h4>Training Completed</h4>
+                        <p>12 employees completed cybersecurity training</p>
+                        <span class="activity-time">3 days ago</span>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon"><i class="fas fa-exchange-alt"></i></div>
+                    <div class="activity-content">
+                        <h4>Department Transfer</h4>
+                        <p>Ahmed Hassan transferred from Sales to Marketing</p>
+                        <span class="activity-time">1 week ago</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Pass data from Flask to JavaScript
+    const departmentsData = {{ departments|tojson }};
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize department distribution chart
+        initializeDepartmentPieChart(departmentsData);
+        initializeHeadcountTrendChart();
+        
+        // Employee search functionality
+        const searchInput = document.getElementById('employeeSearch');
+        const departmentFilter = document.getElementById('departmentFilter');
+        const employeeRows = document.querySelectorAll('#employeeTableBody tr');
+        
+        searchInput.addEventListener('input', filterEmployees);
+        departmentFilter.addEventListener('change', filterEmployees);
+        
+        function filterEmployees() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const departmentValue = departmentFilter.value;
+            
+            employeeRows.forEach(row => {
+                const name = row.children[1].textContent.toLowerCase();
+                const department = row.getAttribute('data-department');
+                
+                const matchesSearch = name.includes(searchTerm);
+                const matchesDepartment = departmentValue === 'all' || department === departmentValue;
+                
+                if (matchesSearch && matchesDepartment) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

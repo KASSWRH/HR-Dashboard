@@ -1,0 +1,129 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="dashboard-grid">
+    <!-- First Row -->
+    <div class="card headcount-card">
+        <div class="card-header">
+            <h3>Headcount Overview</h3>
+        </div>
+        <div class="card-body">
+            <canvas id="headcountChart"></canvas>
+        </div>
+    </div>
+    
+    <div class="card nationality-card">
+        <div class="card-header">
+            <h3>Nationals Diversity</h3>
+        </div>
+        <div class="card-body">
+            <canvas id="nationalityChart"></canvas>
+        </div>
+    </div>
+    
+    <!-- Second Row -->
+    <div class="card engagement-card">
+        <div class="card-header">
+            <h3>Engagement Trend</h3>
+        </div>
+        <div class="card-body">
+            <canvas id="engagementChart"></canvas>
+        </div>
+    </div>
+    
+    <div class="card top-performers-card">
+        <div class="card-header">
+            <h3>Top Performers</h3>
+        </div>
+        <div class="card-body">
+            <div class="employee-list">
+                {% for employee in employees %}
+                    {% if employee.performance >= 85 %}
+                    <div class="employee-card">
+                        <div class="employee-info">
+                            <h4>{{ employee.name }}</h4>
+                            <p>{{ employee.department }} - {{ employee.position }}</p>
+                        </div>
+                        <div class="employee-performance">
+                            <div class="performance-bar">
+                                <div class="performance-fill" style="width: {{ employee.performance }}%;"></div>
+                            </div>
+                            <span>{{ employee.performance }}%</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Third Row -->
+    <div class="card recent-hires-card">
+        <div class="card-header">
+            <h3>Recent Hires</h3>
+        </div>
+        <div class="card-body">
+            <div class="recent-hires">
+                <div class="recent-hire">
+                    <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c" alt="New Employee">
+                    <div class="hire-info">
+                        <h4>Emily Chen</h4>
+                        <p>UX Designer - Started 2 weeks ago</p>
+                    </div>
+                </div>
+                <div class="recent-hire">
+                    <img src="https://images.unsplash.com/photo-1590650046871-92c887180603" alt="New Employee">
+                    <div class="hire-info">
+                        <h4>Michael Rodriguez</h4>
+                        <p>Backend Developer - Started 3 weeks ago</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card open-positions-card">
+        <div class="card-header">
+            <h3>Open Positions</h3>
+        </div>
+        <div class="card-body">
+            <div class="position-list">
+                <div class="position-item">
+                    <div class="position-info">
+                        <h4>Senior Product Manager</h4>
+                        <p>Marketing - 4 candidates</p>
+                    </div>
+                    <div class="position-status">In Progress</div>
+                </div>
+                <div class="position-item">
+                    <div class="position-info">
+                        <h4>Frontend Developer</h4>
+                        <p>Engineering - 8 candidates</p>
+                    </div>
+                    <div class="position-status">Interviewing</div>
+                </div>
+                <div class="position-item">
+                    <div class="position-info">
+                        <h4>HR Specialist</h4>
+                        <p>HR - 2 candidates</p>
+                    </div>
+                    <div class="position-status">New</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Pass data from Flask to JavaScript
+    const departmentsData = {{ departments|tojson }};
+    const nationalityData = {{ nationality_data|tojson }};
+    
+    // This will be called when the DOM is loaded to initialize the charts
+    document.addEventListener('DOMContentLoaded', () => {
+        initializeHeadcountChart(departmentsData);
+        initializeNationalityChart(nationalityData);
+        initializeEngagementChart();
+    });
+</script>
+{% endblock %}

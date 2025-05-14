@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR DASH - Human Resources Dashboard</title>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h1>HR DASH</h1>
+            </div>
+            
+            <div class="sidebar-section">
+                <p class="sidebar-title">PERSONAL</p>
+                <ul class="sidebar-menu">
+                    <li class="sidebar-item {% if active_page == 'dashboard' %}active{% endif %}">
+                        <a href="{{ url_for('index') }}">
+                            <i class="fas fa-th-large"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="sidebar-section">
+                <p class="sidebar-title">HR MODULES</p>
+                <ul class="sidebar-menu">
+                    <li class="sidebar-item {% if active_page == 'workforce' %}active{% endif %}">
+                        <a href="{{ url_for('workforce') }}">
+                            <i class="fas fa-users"></i>
+                            <span>Workforce</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item {% if active_page == 'recruitment' %}active{% endif %}">
+                        <a href="{{ url_for('recruitment') }}">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Recruitment</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item {% if active_page == 'attendance' %}active{% endif %}">
+                        <a href="{{ url_for('attendance') }}">
+                            <i class="fas fa-clock"></i>
+                            <span>Attendance</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item {% if active_page == 'performance' %}active{% endif %}">
+                        <a href="{{ url_for('performance') }}">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Performance</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item {% if active_page == 'payroll' %}active{% endif %}">
+                        <a href="{{ url_for('payroll') }}">
+                            <i class="fas fa-dollar-sign"></i>
+                            <span>Payroll</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="sidebar-footer">
+                <p>v0.1 • Prototype</p>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-title">
+                    <h2>{{ active_page|capitalize }}</h2>
+                </div>
+                
+                <div class="salary-summary">
+                    <div class="salary-item">
+                        <span class="salary-label">THIS MONTH</span>
+                        <span class="salary-value">{{ salary_data.this_month }}</span>
+                        <span class="salary-trend"><i class="fas fa-arrow-up"></i></span>
+                    </div>
+                    <div class="salary-item">
+                        <span class="salary-label">LAST MONTH</span>
+                        <span class="salary-value">{{ salary_data.last_month }}</span>
+                        <span class="salary-trend"><i class="fas fa-arrow-down"></i></span>
+                    </div>
+                </div>
+                
+                <div class="header-actions">
+                    <button class="lang-toggle" onclick="toggleLanguage()">
+                        <i class="fas fa-globe"></i>
+                        <span class="lang-text">EN/عربي</span>
+                    </button>
+                    <div class="notifications">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <div class="user-profile">
+                        <img src="https://images.unsplash.com/photo-1573165706511-3ffde6ef1fe3" alt="User Profile">
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Page Content -->
+            <div class="page-content">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+    
+    <!-- Custom JavaScript -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+</body>
+</html>

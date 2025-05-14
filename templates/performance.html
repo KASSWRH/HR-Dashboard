@@ -1,0 +1,321 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="performance-container">
+    <div class="performance-header">
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                <div class="stat-content">
+                    <h3>84.5%</h3>
+                    <p>Avg. Performance Score</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-tasks"></i></div>
+                <div class="stat-content">
+                    <h3>92%</h3>
+                    <p>Task Completion Rate</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-star"></i></div>
+                <div class="stat-content">
+                    <h3>15</h3>
+                    <p>Top Performers</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                <div class="stat-content">
+                    <h3>8</h3>
+                    <p>Needs Improvement</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="performance-body">
+        <div class="card-row">
+            <div class="card department-performance">
+                <div class="card-header">
+                    <h3>Department Performance</h3>
+                </div>
+                <div class="card-body">
+                    <canvas id="departmentPerformanceChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="card performance-trend">
+                <div class="card-header">
+                    <h3>Performance Trend</h3>
+                </div>
+                <div class="card-body">
+                    <canvas id="performanceTrendChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card employee-performance">
+            <div class="card-header">
+                <h3>Employee Performance</h3>
+                <div class="search-filter">
+                    <input type="text" placeholder="Search employees..." id="performanceSearch">
+                    <select id="performanceDepartmentFilter">
+                        <option value="all">All Departments</option>
+                        {% for dept in departments %}
+                        <option value="{{ dept }}">{{ dept }}</option>
+                        {% endfor %}
+                    </select>
+                    <select id="performanceRatingFilter">
+                        <option value="all">All Ratings</option>
+                        <option value="excellent">Excellent (90-100%)</option>
+                        <option value="good">Good (80-89%)</option>
+                        <option value="average">Average (70-79%)</option>
+                        <option value="needs-improvement">Needs Improvement (<70%)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="card-body">
+                <table class="performance-table">
+                    <thead>
+                        <tr>
+                            <th>Employee</th>
+                            <th>Department</th>
+                            <th>Tasks Completed</th>
+                            <th>Tasks Pending</th>
+                            <th>Attendance</th>
+                            <th>Performance Rating</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="performanceTableBody">
+                        {% for employee in employees %}
+                        <tr data-department="{{ employee.department }}" data-rating="{{ employee.performance }}">
+                            <td>
+                                <div class="employee-info">
+                                    <img style="width: 200px;" src="https://images.unsplash.com/photo-1573165706511-3ffde6ef1fe3" alt="Employee">
+                                    <div>
+                                        <h4>{{ employee.name }}</h4>
+                                        <p>{{ employee.position }}</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{ employee.department }}</td>
+                            <td>{{ employee.tasks_completed }}</td>
+                            <td>{{ employee.tasks_pending }}</td>
+                            <td>{{ employee.attendance }}%</td>
+                            <td>
+                                <div class="performance-indicator">
+                                    <div class="performance-bar">
+                                        <div class="performance-fill 
+                                            {% if employee.performance >= 90 %}excellent
+                                            {% elif employee.performance >= 80 %}good
+                                            {% elif employee.performance >= 70 %}average
+                                            {% else %}needs-improvement{% endif %}" 
+                                            style="width: {{ employee.performance }}%">
+                                        </div>
+                                    </div>
+                                    <span>{{ employee.performance }}%</span>
+                                </div>
+                            </td>
+                            <td>
+                                <button class="action-btn view-btn"><i class="fas fa-eye"></i></button>
+                                <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="card-row">
+            <div class="card top-performers">
+                <div class="card-header">
+                    <h3>Top Performers</h3>
+                </div>
+                <div class="card-body">
+                    <div class="performer-cards">
+                        {% for employee in employees %}
+                            {% if employee.performance >= 90 %}
+                            <div class="performer-card">
+                                <div class="performer-avatar">
+                                    <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c" alt="Employee">
+                                    <div class="performer-rank">{{ loop.index }}</div>
+                                </div>
+                                <div class="performer-info">
+                                    <h4>{{ employee.name }}</h4>
+                                    <p>{{ employee.department }} - {{ employee.position }}</p>
+                                    <div class="performer-stats">
+                                        <div class="stat">
+                                            <span class="stat-label">Performance</span>
+                                            <span class="stat-value">{{ employee.performance }}%</span>
+                                        </div>
+                                        <div class="stat">
+                                            <span class="stat-label">Tasks</span>
+                                            <span class="stat-value">{{ employee.tasks_completed }}</span>
+                                        </div>
+                                        <div class="stat">
+                                            <span class="stat-label">Attendance</span>
+                                            <span class="stat-value">{{ employee.attendance }}%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card skills-matrix">
+                <div class="card-header">
+                    <h3>Skills Matrix</h3>
+                </div>
+                <div class="card-body">
+                    <canvas id="skillsMatrixChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card reviews-schedule">
+            <div class="card-header">
+                <h3>Upcoming Performance Reviews</h3>
+            </div>
+            <div class="card-body">
+                <div class="review-timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-date">
+                            <div class="date-box">
+                                <span class="month">MAY</span>
+                                <span class="day">12</span>
+                            </div>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="review-details">
+                                <h4>Quarterly Review - Engineering Team</h4>
+                                <p>10 employees scheduled for review with Engineering Manager</p>
+                                <div class="review-employees">
+                                    <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c" alt="Employee">
+                                    <img src="https://images.unsplash.com/photo-1590650046871-92c887180603" alt="Employee">
+                                    <img src="https://images.unsplash.com/photo-1573165706511-3ffde6ef1fe3" alt="Employee">
+                                    <span class="more-employees">+7</span>
+                                </div>
+                            </div>
+                            <div class="timeline-actions">
+                                <button class="btn-primary">Prepare</button>
+                                <button class="btn-secondary">Reschedule</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-date">
+                            <div class="date-box">
+                                <span class="month">MAY</span>
+                                <span class="day">15</span>
+                            </div>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="review-details">
+                                <h4>Annual Review - Sales Team</h4>
+                                <p>6 employees scheduled for review with Sales Director</p>
+                                <div class="review-employees">
+                                    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f" alt="Employee">
+                                    <img src="https://images.unsplash.com/photo-1590650516494-0c8e4a4dd67e" alt="Employee">
+                                    <span class="more-employees">+4</span>
+                                </div>
+                            </div>
+                            <div class="timeline-actions">
+                                <button class="btn-primary">Prepare</button>
+                                <button class="btn-secondary">Reschedule</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-date">
+                            <div class="date-box">
+                                <span class="month">MAY</span>
+                                <span class="day">20</span>
+                            </div>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="review-details">
+                                <h4>Probation End Review - New Hires</h4>
+                                <p>3 employees ending probationary period</p>
+                                <div class="review-employees">
+                                    <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c" alt="Employee">
+                                    <img src="https://images.unsplash.com/photo-1590650046871-92c887180603" alt="Employee">
+                                    <img src="https://images.unsplash.com/photo-1573165706511-3ffde6ef1fe3" alt="Employee">
+                                </div>
+                            </div>
+                            <div class="timeline-actions">
+                                <button class="btn-primary">Prepare</button>
+                                <button class="btn-secondary">Reschedule</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize department performance chart
+        initializeDepartmentPerformanceChart();
+        
+        // Initialize performance trend chart
+        initializePerformanceTrendChart();
+        
+        // Initialize skills matrix chart
+        initializeSkillsMatrixChart();
+        
+        // Performance search functionality
+        const searchInput = document.getElementById('performanceSearch');
+        const departmentFilter = document.getElementById('performanceDepartmentFilter');
+        const ratingFilter = document.getElementById('performanceRatingFilter');
+        const performanceRows = document.querySelectorAll('#performanceTableBody tr');
+        
+        searchInput.addEventListener('input', filterPerformance);
+        departmentFilter.addEventListener('change', filterPerformance);
+        ratingFilter.addEventListener('change', filterPerformance);
+        
+        function filterPerformance() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const departmentValue = departmentFilter.value;
+            const ratingValue = ratingFilter.value;
+            
+            performanceRows.forEach(row => {
+                const name = row.querySelector('.employee-info h4').textContent.toLowerCase();
+                const department = row.getAttribute('data-department');
+                const rating = parseInt(row.getAttribute('data-rating'));
+                
+                // Check if the row matches all filters
+                const matchesSearch = name.includes(searchTerm);
+                const matchesDepartment = departmentValue === 'all' || department === departmentValue;
+                
+                let matchesRating = true;
+                if (ratingValue === 'excellent') {
+                    matchesRating = rating >= 90;
+                } else if (ratingValue === 'good') {
+                    matchesRating = rating >= 80 && rating < 90;
+                } else if (ratingValue === 'average') {
+                    matchesRating = rating >= 70 && rating < 80;
+                } else if (ratingValue === 'needs-improvement') {
+                    matchesRating = rating < 70;
+                }
+                
+                if (matchesSearch && matchesDepartment && matchesRating) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

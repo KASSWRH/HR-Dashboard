@@ -1,0 +1,329 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="recruitment-container">
+    <div class="recruitment-header">
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-briefcase"></i></div>
+                <div class="stat-content">
+                    <h3>12</h3>
+                    <p>Open Positions</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-user-tie"></i></div>
+                <div class="stat-content">
+                    <h3>78</h3>
+                    <p>Active Candidates</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+                <div class="stat-content">
+                    <h3>24</h3>
+                    <p>Interviews This Week</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                <div class="stat-content">
+                    <h3>32</h3>
+                    <p>Days Avg. Time to Hire</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="recruitment-body">
+        <div class="card job-postings">
+            <div class="card-header">
+                <h3>Active Job Postings</h3>
+                <button class="add-btn">
+                    <i class="fas fa-plus"></i> New Job
+                </button>
+            </div>
+            <div class="card-body">
+                <table class="job-table">
+                    <thead>
+                        <tr>
+                            <th>Position</th>
+                            <th>Department</th>
+                            <th>Applications</th>
+                            <th>Status</th>
+                            <th>Posted Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Senior Product Manager</td>
+                            <td>Marketing</td>
+                            <td>
+                                <div class="applications-indicator">
+                                    <div class="indicator-circles">
+                                        <span class="circle qualified"></span>
+                                        <span class="circle interviewing"></span>
+                                        <span class="circle rejected"></span>
+                                    </div>
+                                    <span>12/4/8</span>
+                                </div>
+                            </td>
+                            <td><span class="status-badge in-progress">In Progress</span></td>
+                            <td>Apr 15, 2023</td>
+                            <td>
+                                <button class="action-btn view-btn"><i class="fas fa-eye"></i></button>
+                                <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+                                <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Frontend Developer</td>
+                            <td>Engineering</td>
+                            <td>
+                                <div class="applications-indicator">
+                                    <div class="indicator-circles">
+                                        <span class="circle qualified"></span>
+                                        <span class="circle interviewing"></span>
+                                        <span class="circle rejected"></span>
+                                    </div>
+                                    <span>18/8/5</span>
+                                </div>
+                            </td>
+                            <td><span class="status-badge interviewing">Interviewing</span></td>
+                            <td>Apr 10, 2023</td>
+                            <td>
+                                <button class="action-btn view-btn"><i class="fas fa-eye"></i></button>
+                                <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+                                <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>HR Specialist</td>
+                            <td>HR</td>
+                            <td>
+                                <div class="applications-indicator">
+                                    <div class="indicator-circles">
+                                        <span class="circle qualified"></span>
+                                        <span class="circle interviewing"></span>
+                                        <span class="circle rejected"></span>
+                                    </div>
+                                    <span>6/2/3</span>
+                                </div>
+                            </td>
+                            <td><span class="status-badge new">New</span></td>
+                            <td>Apr 18, 2023</td>
+                            <td>
+                                <button class="action-btn view-btn"><i class="fas fa-eye"></i></button>
+                                <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+                                <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Data Analyst</td>
+                            <td>IT</td>
+                            <td>
+                                <div class="applications-indicator">
+                                    <div class="indicator-circles">
+                                        <span class="circle qualified"></span>
+                                        <span class="circle interviewing"></span>
+                                        <span class="circle rejected"></span>
+                                    </div>
+                                    <span>9/3/4</span>
+                                </div>
+                            </td>
+                            <td><span class="status-badge in-progress">In Progress</span></td>
+                            <td>Apr 12, 2023</td>
+                            <td>
+                                <button class="action-btn view-btn"><i class="fas fa-eye"></i></button>
+                                <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+                                <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="recruitment-grid">
+            <div class="card recruitment-funnel">
+                <div class="card-header">
+                    <h3>Recruitment Funnel</h3>
+                </div>
+                <div class="card-body">
+                    <canvas id="recruitmentFunnelChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="card upcoming-interviews">
+                <div class="card-header">
+                    <h3>Upcoming Interviews</h3>
+                </div>
+                <div class="card-body">
+                    <div class="interview-list">
+                        <div class="interview-item">
+                            <div class="interview-date">
+                                <div class="date-box">
+                                    <span class="month">APR</span>
+                                    <span class="day">25</span>
+                                </div>
+                                <span class="time">10:30 AM</span>
+                            </div>
+                            <div class="interview-details">
+                                <h4>Michael Brown - Frontend Developer</h4>
+                                <p>Technical Interview with Lead Developer</p>
+                                <div class="interview-actions">
+                                    <button class="btn-sm">View Resume</button>
+                                    <button class="btn-sm">Reschedule</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="interview-item">
+                            <div class="interview-date">
+                                <div class="date-box">
+                                    <span class="month">APR</span>
+                                    <span class="day">26</span>
+                                </div>
+                                <span class="time">2:00 PM</span>
+                            </div>
+                            <div class="interview-details">
+                                <h4>Sarah Johnson - Product Manager</h4>
+                                <p>Final Interview with Department Head</p>
+                                <div class="interview-actions">
+                                    <button class="btn-sm">View Resume</button>
+                                    <button class="btn-sm">Reschedule</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="interview-item">
+                            <div class="interview-date">
+                                <div class="date-box">
+                                    <span class="month">APR</span>
+                                    <span class="day">27</span>
+                                </div>
+                                <span class="time">11:00 AM</span>
+                            </div>
+                            <div class="interview-details">
+                                <h4>Ahmed Hassan - HR Specialist</h4>
+                                <p>Initial Screening with HR Manager</p>
+                                <div class="interview-actions">
+                                    <button class="btn-sm">View Resume</button>
+                                    <button class="btn-sm">Reschedule</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card candidate-pipeline">
+            <div class="card-header">
+                <h3>Candidate Pipeline</h3>
+            </div>
+            <div class="card-body">
+                <div class="pipeline-stages">
+                    <div class="pipeline-stage">
+                        <div class="stage-header">
+                            <h4>Applied</h4>
+                            <span class="stage-count">45</span>
+                        </div>
+                        <div class="stage-cards">
+                            <div class="candidate-card">
+                                <div class="candidate-info">
+                                    <h5>Emma Wilson</h5>
+                                    <p>Frontend Developer</p>
+                                    <span class="applied-date">Applied: Apr 20</span>
+                                </div>
+                                <div class="candidate-actions">
+                                    <button class="action-btn move-forward"><i class="fas fa-arrow-right"></i></button>
+                                    <button class="action-btn view-profile"><i class="fas fa-user"></i></button>
+                                </div>
+                            </div>
+                            <div class="candidate-card">
+                                <div class="candidate-info">
+                                    <h5>John Smith</h5>
+                                    <p>Data Analyst</p>
+                                    <span class="applied-date">Applied: Apr 19</span>
+                                </div>
+                                <div class="candidate-actions">
+                                    <button class="action-btn move-forward"><i class="fas fa-arrow-right"></i></button>
+                                    <button class="action-btn view-profile"><i class="fas fa-user"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="pipeline-stage">
+                        <div class="stage-header">
+                            <h4>Screening</h4>
+                            <span class="stage-count">18</span>
+                        </div>
+                        <div class="stage-cards">
+                            <div class="candidate-card">
+                                <div class="candidate-info">
+                                    <h5>Alex Johnson</h5>
+                                    <p>Product Manager</p>
+                                    <span class="applied-date">Screening: Apr 22</span>
+                                </div>
+                                <div class="candidate-actions">
+                                    <button class="action-btn move-forward"><i class="fas fa-arrow-right"></i></button>
+                                    <button class="action-btn view-profile"><i class="fas fa-user"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="pipeline-stage">
+                        <div class="stage-header">
+                            <h4>Interview</h4>
+                            <span class="stage-count">12</span>
+                        </div>
+                        <div class="stage-cards">
+                            <div class="candidate-card">
+                                <div class="candidate-info">
+                                    <h5>Sarah Ahmed</h5>
+                                    <p>HR Specialist</p>
+                                    <span class="applied-date">Interview: Apr 25</span>
+                                </div>
+                                <div class="candidate-actions">
+                                    <button class="action-btn move-forward"><i class="fas fa-arrow-right"></i></button>
+                                    <button class="action-btn view-profile"><i class="fas fa-user"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="pipeline-stage">
+                        <div class="stage-header">
+                            <h4>Offer</h4>
+                            <span class="stage-count">3</span>
+                        </div>
+                        <div class="stage-cards">
+                            <div class="candidate-card">
+                                <div class="candidate-info">
+                                    <h5>David Lee</h5>
+                                    <p>Senior Developer</p>
+                                    <span class="applied-date">Offer Sent: Apr 18</span>
+                                </div>
+                                <div class="candidate-actions">
+                                    <button class="action-btn move-forward"><i class="fas fa-check"></i></button>
+                                    <button class="action-btn view-profile"><i class="fas fa-user"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        initializeRecruitmentFunnelChart();
+    });
+</script>
+{% endblock %}
